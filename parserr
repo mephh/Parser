@@ -1,0 +1,42 @@
+import os
+from ftplib import FTP
+address = [
+    '10.72.246.54',
+    '10.72.246.59',
+    '10.72.246.55',
+    '10.72.246.56',
+    '10.72.246.57',
+    '10.72.246.58'
+]
+path = ['10.72.246.58']
+
+
+for item in path:
+    print("actually in: "+item)
+    ftp = FTP(item, 'root', '1234')
+
+    ftp.cwd('c\\bastrza')
+    #ftp.retrlines('LIST')
+    listing = []
+    ftp.retrlines('LIST', listing.append)
+    names = []
+    for each in listing:
+        words = each[-22:]
+        if words == "total 123": continue
+        print words
+        if len(words) == 22:
+            names.append(words)
+        else:
+            print("brak logow")
+
+    for each in names:
+        print each
+        local_filename = os.path.join(r"c:\users\bastrza\Desktop", each)    #sciezka do plikow na ftp
+        lf = open(local_filename, "wb")                                     #utworzenie pliku o nazwie takiej samej jak plik na ftp
+        ftp.retrbinary("RETR "+each, lf.write, 1024)                        #pobranie pliku i zapisanie
+        lf.close()
+        if os.path.isfile(lf):
+            ftp.delete(each)
+
+#parsing time
+
