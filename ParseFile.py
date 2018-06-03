@@ -26,10 +26,11 @@ def parse_log():
     # print(log_items)
 
         tfile = []
+        board = []
         for line in infile:
             line = line.strip()
             tfile.append(line)
-        for line in tfile:
+        for count, line in enumerate(tfile):
             line = line.strip()
             if line.startswith('DATE'):
                 dateline = line.split(' ')
@@ -39,8 +40,12 @@ def parse_log():
                 snline = line.split('=')
                 log_items['serial'].append(snline[1])
                 i+=1
-            
+            if 'BOARD' in line:
+                board.append(count+1)
+        # for cnt, line in enumerate(tfile):
+        #     print('Line {}: {}'.format(cnt, line))
         # print(list(enumerate(tfile)), end='')
         # print(log_items)
+        print(board)
 
 parse_log()
