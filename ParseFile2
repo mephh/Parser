@@ -1,0 +1,74 @@
+import os
+import re
+
+log_items = dict(datetime = 'dateandtime', serial = [], boards = [], faults=[])
+local_dir = 'c:\\bastrza'
+month = {'January':'01', 'February':'02', 'March':'03', 'April':'04', 'May':'05',
+'June':'06', 'July':'07', 'August':'08', 'September':'09', 'October':'10', 'November':'11', 'December':'12'}
+
+# param = {'TEST' : test_str, 'ID' : id_str, 'MESVAL' : mesval_str, 'LOLIM' : lolim_str, 'HILIM' : hilim_str}
+param = dict(test_str = [], id_str = [], mesval_str = [], lolim_str = [], hilim_str = [])
+
+
+filenames = []
+filenames = os.listdir(local_dir)
+board_line = []
+err = []
+flag = False
+# print(filenames)
+# for each in filenames:
+#     with open(os.path.join(local_dir, each), 'r+') as infile:
+with open('20180507_1747.log', 'r+') as infile:
+    tfile = []
+    boards = []
+    logfile = list(enumerate(infile))
+    i=0
+    for count, line in logfile:
+        line = line.strip()
+        if line.startswith('DATE'):
+            dateline = line.split(' ')
+            log_items['datetime'] = (dateline[7]+(month.get(dateline[3]))+dateline[5]+'_'+dateline[6].replace(':','_'))
+        if line.startswith('SERIAL No'):
+            snline = line.split('=')
+            log_items['serial'].append(snline[1])
+        if 'BOARD' in line:
+            line = line.replace(' ', '')            #strip line so only BOARD1, BOARD2 stays
+            log_items['boards'].append(line)        #list with names BOARD1 etc
+            board_line.append(count+1)              #add line number which contains 'BOARD'
+        if '{' in line:
+            for i in range(len(board_line)):
+                for n, l in logfile[int(board_line[i]):]:
+                    # print(l)
+                    if '}' in l:
+                        i+=1
+                        print(i)
+                        err.append(param)
+                        break
+                    else:
+                        # if 'TEST' in l:
+                        #     param['test_str']append(l.strip().replace(' ',''))
+                        # if 'ID' in l:
+                        #     id_str.append(l.strip().replace(' ',''))
+                        # if 'MESVAL' in l:
+                        #     mesval_str.append(l.strip().replace(' ',''))
+                        # if 'LOLIM' in l:
+                        #     lolim_str.append(l.strip().replace(' ',''))
+                        # if 'HILIM' in l:
+                        #     hilim_str.append(l.strip().replace(' ',''))
+                        # i+=1
+                        if 'TEST' in l:
+                            param['test_str']=l.strip().replace(' ','')
+                        if 'ID' in l:
+                            param['id_str']=l.strip().replace(' ','')
+                        if 'MESVAL' in l:
+                            param['mesval_str']=l.strip().replace(' ','')
+                        if 'LOLIM' in l:
+                            param['lolim_str']=l.strip().replace(' ','')
+                        if 'HILIM' in l:
+                            param['hilim_str']=l.strip().replace(' ','')
+                            i+=1
+
+print(err)
+
+
+# parse_log()
